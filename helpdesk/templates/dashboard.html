@@ -1,0 +1,92 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HelpDesk | Workspace</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    .dynamic{max-width:1500px;margin:auto;padding:28px 34px;color:#0f172a}.dyn-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.dyn-top h1{margin:0;font-size:29px}.dyn-top p,.muted{color:#64748b}.dyn-actions{display:flex;gap:10px}.dyn-btn{border:0;border-radius:10px;background:#3b82f6;color:white;padding:11px 16px;font-weight:700;cursor:pointer;text-decoration:none}.dyn-btn.alt{background:#eaf1ff;color:#2563eb}.dyn-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}.dyn-card,.dyn-panel{background:rgba(255,255,255,.88);border:1px solid #e5edf7;border-radius:16px;padding:20px;box-shadow:0 12px 32px #1725540c}.dyn-card small{color:#64748b}.dyn-card strong{display:block;font-size:30px;margin-top:8px}.dyn-columns{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);gap:18px}.dyn-panel{margin-bottom:18px}.dyn-panel h2{font-size:18px;margin:0 0 14px}.dyn-table{width:100%;border-collapse:collapse}.dyn-table th,.dyn-table td{text-align:left;padding:12px 9px;border-bottom:1px solid #edf1f6;font-size:13px;vertical-align:middle}.dyn-table th{color:#64748b;font-size:10px;letter-spacing:.08em}.badge{padding:5px 9px;border-radius:20px;background:#eff6ff;color:#2563eb;font-size:11px;font-weight:700;white-space:nowrap}.badge.Resolved,.badge.Completed{background:#dcfce7;color:#15803d}.badge.Pending,.badge.Under\ Review{background:#fef3c7;color:#b45309}.badge.Urgent,.badge.High{background:#fee2e2;color:#b91c1c}.dyn-form{display:grid;gap:10px}.dyn-form input,.dyn-form textarea,.dyn-form select,.inline select,.inline input{font:inherit;border:1px solid #dbe3ee;border-radius:9px;padding:10px;background:white}.dyn-form textarea{min-height:74px}.inline{display:flex;gap:6px;align-items:center;margin-top:5px}.inline button{border:0;background:#0b1220;color:white;border-radius:7px;padding:7px 10px;cursor:pointer}.messages{list-style:none;padding:0}.messages li{padding:10px;background:#eff6ff;border-radius:8px;margin-bottom:7px}.overdue{color:#dc2626;font-weight:700}.dyn-profile{color:#64748b}@media(max-width:900px){.dyn-grid{grid-template-columns:repeat(2,1fr)}.dyn-columns{grid-template-columns:1fr}.dynamic{padding:18px}}@media(max-width:560px){.dyn-grid{grid-template-columns:1fr 1fr}.dyn-top{align-items:flex-start;gap:12px;flex-direction:column}.dyn-table{min-width:620px}.scroll{overflow:auto}}
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <aside class="sidebar glass">
+    <a href="/" class="brand"><div class="brand-icon"><i class="fa-solid fa-headset"></i></div><div><h2>HelpDesk<span>.</span></h2><small>SMART WORKSPACE</small></div></a>
+    <p class="menu-label">WORKSPACE</p>
+    <nav class="sidebar-menu">
+      <a class="menu-item active" href="/"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a>
+      <a class="menu-item" href="#tickets"><i class="fa-solid fa-ticket"></i><span>Tickets</span></a>
+      <a class="menu-item" href="#tasks"><i class="fa-solid fa-list-check"></i><span>Tasks</span></a>
+      {% if role == 'admin' %}
+      <a class="menu-item" href="{% url 'employees' %}"><i class="fa-solid fa-users"></i><span>Employees</span></a>
+      <a class="menu-item" href="{% url 'reports' %}"><i class="fa-solid fa-chart-line"></i><span>Reports</span></a>
+      <a class="menu-item" href="{% url 'register' %}"><i class="fa-solid fa-users"></i><span>Add employee</span></a>
+      <a class="menu-item" href="{% url 'reports_csv' %}"><i class="fa-solid fa-file-csv"></i><span>Export report</span></a>
+      {% endif %}
+    </nav>
+    <div class="sidebar-bottom"><div class="sidebar-profile"><div class="avatar">{{ request.user.username|slice:':1'|upper }}</div><div class="profile-info"><h4>{{ request.user.get_full_name|default:request.user.username }}</h4><p>{{ role|title }}</p></div><a href="{% url 'logout' %}" title="Sign out" style="color:white"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></div></div>
+  </aside>
+  <main class="main-content">
+    <header class="topbar glass"><div class="topbar-left"><button class="menu-toggle" id="menuToggle" aria-label="Toggle sidebar"><i class="fa-solid fa-bars"></i></button><div class="breadcrumb"><span>Workspace</span><i class="fa-solid fa-chevron-right"></i><strong>Dashboard</strong></div></div><div class="topbar-right"><form class="search-box" method="get"><i class="fa-solid fa-magnifying-glass"></i><input name="q" value="{{ request.GET.q }}" placeholder="Search tickets..."></form><a class="icon-button" href="{% url 'notifications' %}" title="Notifications"><i class="fa-regular fa-bell"></i>{% if notifications %}<span class="notification-dot"></span>{% endif %}</a><span class="dyn-profile">{{ request.user.email|default:request.user.username }}</span></div></header>
+    <section class="dynamic">
+      {% if messages %}<ul class="messages">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
+      <div class="dyn-top"><div><h1>Welcome back, {{ request.user.first_name|default:request.user.username }} 👋</h1><p>Here’s what’s happening across your workspace.</p></div><div class="dyn-actions"><a class="dyn-btn" href="#new-ticket"><i class="fa-solid fa-plus"></i> New ticket</a>{% if role == 'admin' %}<a class="dyn-btn alt" href="#new-task">Assign task</a>{% endif %}</div></div>
+      <div class="dyn-grid">
+        <article class="dyn-card"><small>{% if role == 'employee' %}My tickets{% else %}Total tickets{% endif %}</small><strong>{{ total_tickets }}</strong></article>
+        <article class="dyn-card"><small>Open tickets</small><strong>{{ open_tickets }}</strong></article>
+        <article class="dyn-card"><small>Pending tickets</small><strong>{{ pending_tickets }}</strong></article>
+        <article class="dyn-card"><small>{% if role == 'admin' %}Employees{% else %}My tasks{% endif %}</small><strong>{% if role == 'admin' %}{{ employees }}{% else %}{{ total_tasks }}{% endif %}</strong></article>
+      </div>
+      <section class="dyn-panel"><h2>Ticket trends</h2><div style="height:260px"><canvas id="ticketChart"></canvas></div></section>
+      <div class="dyn-columns">
+        <div>
+          <section class="dyn-panel" id="tickets"><h2>Recent tickets</h2><div class="scroll"><table class="dyn-table"><thead><tr><th>TICKET</th><th>REQUESTER</th><th>PRIORITY</th><th>STATUS / UPDATE</th></tr></thead><tbody>
+            {% for t in tickets %}
+            <tr>
+              <td><strong>HD-{{ t.pk|stringformat:'04d' }} · {{ t.title }}</strong><br><small class="muted">{{ t.category }} · {{ t.created_at|date:'M j, Y' }}</small>{% if t.attachment %}<br><a href="{% url 'ticket_attachment' t.pk %}">Download attachment</a>{% endif %}{% for c in t.comments.all|slice:':1' %}<br><small class="muted">{{ c.author.username }}: {{ c.body|truncatechars:55 }}</small>{% endfor %}</td>
+              <td>{{ t.created_by.username }}{% if t.assigned_to %}<br><small class="muted">→ {{ t.assigned_to.username }}</small>{% endif %}</td>
+              <td><span class="badge {{ t.priority }}">{{ t.priority }}</span></td>
+              <td>
+                {% if role == 'admin' or role == 'support' or t.created_by_id == request.user.id %}
+                <form class="inline" method="post" action="{% url 'ticket_action' t.pk %}">{% csrf_token %}<select name="status">{% for value,label in ticket_statuses %}<option value="{{ value }}" {% if value == t.status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+                  {% if role == 'admin' %}<select name="assigned_to"><option value="">Assign…</option>{% for u in users %}<option value="{{ u.pk }}" {% if t.assigned_to_id == u.pk %}selected{% endif %}>{{ u.username }}</option>{% endfor %}</select>{% endif %}<button>Save</button>
+                </form>
+                <form class="inline" method="post" action="{% url 'ticket_action' t.pk %}">{% csrf_token %}<input type="hidden" name="action" value="comment"><input name="body" placeholder="Add a comment" required><button>Send</button></form>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}<tr><td colspan="4" class="muted">No tickets yet. Create one to get started.</td></tr>
+            {% endfor %}
+          </tbody></table></div></section>
+          <section class="dyn-panel" id="tasks"><h2>Tasks</h2><div class="scroll"><table class="dyn-table"><thead><tr><th>TASK</th><th>ASSIGNEE</th><th>DUE</th><th>STATUS</th></tr></thead><tbody>
+            {% for task in tasks %}
+            <tr><td><strong>{{ task.title }}</strong><br><small class="muted">{{ task.description|truncatechars:65 }}</small></td><td>{{ task.assigned_to.username }}</td><td>{% if task.overdue %}<span class="overdue">Overdue · {{ task.due_date }}</span>{% else %}{{ task.due_date|default:'—' }}{% endif %}</td><td><form class="inline" method="post" action="{% url 'task_action' task.pk %}">{% csrf_token %}<select name="status">{% for value,label in task_statuses %}<option value="{{ value }}" {% if value == task.status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select><button>Save</button></form></td></tr>
+            {% empty %}<tr><td colspan="4" class="muted">No tasks assigned yet.</td></tr>
+            {% endfor %}
+          </tbody></table></div></section>
+        </div>
+        <div>
+          <section class="dyn-panel" id="new-ticket"><h2>Raise a support ticket</h2><form class="dyn-form" method="post" enctype="multipart/form-data" action="{% url 'create_ticket' %}">{% csrf_token %}<input name="title" placeholder="Ticket title" maxlength="180" required><textarea name="description" placeholder="Describe the issue" required></textarea><select name="category"><option>Technical Issue</option><option>Software Issue</option><option>Hardware Issue</option><option>Network Problem</option><option>Account Access</option><option>General Support</option></select><select name="priority"><option>Low</option><option selected>Medium</option><option>High</option><option>Urgent</option></select><label class="muted">Attachment (max 10 MB)<input type="file" name="attachment" accept=".pdf,.png,.jpg,.jpeg,.txt,.doc,.docx,.xlsx,.zip"></label><button class="dyn-btn">Submit ticket</button></form></section>
+          {% if role == 'admin' %}
+          <section class="dyn-panel" id="new-task"><h2>Assign a task</h2><form class="dyn-form" method="post" action="{% url 'create_task' %}">{% csrf_token %}<input name="title" placeholder="Task title" required><textarea name="description" placeholder="What needs to be done?"></textarea><select name="assigned_to" required><option value="">Choose employee</option>{% for u in users %}<option value="{{ u.pk }}">{{ u.get_full_name|default:u.username }}</option>{% endfor %}</select><select name="priority"><option>Low</option><option selected>Medium</option><option>High</option><option>Urgent</option></select><input type="date" name="due_date"><button class="dyn-btn">Assign task</button></form></section>
+          <section class="dyn-panel"><h2>Recent activity</h2>{% for a in activities %}<p class="muted"><strong>{{ a.user.username|default:'System' }}</strong> {{ a.message }}<br><small>{{ a.created_at|timesince }} ago</small></p>{% empty %}<p class="muted">Activity appears here as your team works.</p>{% endfor %}</section>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<script src="{% static 'js/script.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{{ chart_months|json_script:'chart-months' }}{{ chart_month_values|json_script:'chart-month-values' }}{{ chart_statuses|json_script:'chart-statuses' }}{{ chart_status_values|json_script:'chart-status-values' }}
+<script>
+const ctx=document.getElementById('ticketChart');
+if(ctx){const months=JSON.parse(document.getElementById('chart-months').textContent);const monthValues=JSON.parse(document.getElementById('chart-month-values').textContent);const statuses=JSON.parse(document.getElementById('chart-statuses').textContent);const statusValues=JSON.parse(document.getElementById('chart-status-values').textContent);new Chart(ctx,{type:'bar',data:{labels:months.length?months:statuses,datasets:[{label:months.length?'Tickets created':'Ticket status totals',data:months.length?monthValues:statusValues,backgroundColor:'#3b82f6',borderRadius:7}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});}
+</script>
+</body>
+</html>

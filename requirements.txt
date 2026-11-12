@@ -1,0 +1,4 @@
+Django>=5.2,<6.1
+djangorestframework>=3.16,<4
+drf-spectacular>=0.28,<1
+mysqlclient>=2.2; platform_system != "Windows"

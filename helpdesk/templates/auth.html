@@ -1,0 +1,57 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% if register %}Add employee{% else %}Sign in{% endif %} · HelpDesk</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body { background: #f8fafc; }
+        .auth { max-width: 430px; margin: 9vh auto; padding: 34px; color: #0f172a; background: #fff; border: 1px solid #e5edf7; border-radius: 20px; box-shadow: 0 20px 60px #0b12201a; }
+        .auth h1 { margin: 0 0 8px; }
+        .auth p { color: #64748b; }
+        .auth form { display: grid; gap: 13px; margin-top: 24px; }
+        .auth input, .auth select { padding: 12px; border: 1px solid #dbe3ee; border-radius: 9px; font: inherit; }
+        .auth button { padding: 12px; color: white; background: #3b82f6; border: 0; border-radius: 9px; font-weight: 700; }
+        .auth a { color: #2563eb; }
+        .messages { color: #b91c1c; }
+    </style>
+</head>
+<body>
+    <section class="auth">
+        {% if register %}
+            <h1>Add an employee</h1>
+            <p>Create an account for your team member.</p>
+        {% else %}
+            <h1>Welcome back</h1>
+            <p>Sign in to your helpdesk workspace.</p>
+        {% endif %}
+
+        {% if messages %}
+            {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            {% if register %}
+                <input name="first_name" placeholder="Full name">
+                <input name="email" type="email" placeholder="Work email" required>
+                <select name="role">
+                    <option value="employee">Employee</option>
+                    <option value="support">Support staff</option>
+                    <option value="admin">Admin</option>
+                </select>
+            {% endif %}
+            <input name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password (8+ characters)" required>
+            <button type="submit">{% if register %}Create account{% else %}Sign in{% endif %}</button>
+        </form>
+
+        {% if not register %}
+            <p style="margin-top: 20px"><a href="{% url 'password_reset' %}">Forgot password?</a></p>
+        {% endif %}
+        <a href="/">Back to workspace</a>
+    </section>
+</body>
+</html>
